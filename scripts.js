@@ -71,4 +71,39 @@ TODO:
       if (isNaN(resultNum)) {
         resultNum = "You broke it!";
       } else {
-        resultNum = "Look at
+        resultNum = "Look at what you've done";
+        el("#calculator").classList.add("broken");
+        el("#reset").classList.add("show");
+      }
+    }
+
+    viewer.innerHTML = resultNum;
+    equals.setAttribute("data-result", resultNum);
+    oldNum = 0;
+    theNum = resultNum;
+  };
+
+  // When: Clear button is pressed. Clear everything
+  var clearAll = function() {
+    oldNum = "";
+    theNum = "";
+    viewer.innerHTML = "0";
+    equals.setAttribute("data-result", resultNum);
+  };
+
+  // Add click event to numbers
+  for (var i = 0, l = nums.length; i < l; i++) {
+    nums[i].onclick = setNum;
+  }
+
+  // Add click event to operators
+  for (var i = 0, l = ops.length; i < l; i++) {
+    ops[i].onclick = moveNum;
+  }
+
+  // Add click event to equal sign
+  equals.onclick = displayNum;
+
+  // Add click event to clear button
+  el("#clear").onclick = clearAll;
+}());
