@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Calculator</title>
+    <style>
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: auto;
+        }
+        .viewer {
+            grid-column: span 4;
+            background: #222;
+            color: #fff;
+            font-size: 2em;
+            text-align: right;
+            padding: 10px;
+        }
+        button {
+            font-size: 1.5em;
+            padding: 20px;
+            cursor: pointer;
+        }
+        .ops {
+            background: #ff9500;
+            color: #fff;
+        }
+        .clear, .equals {
+            background: #ff3b30;
+            color: #fff;
+        }
+        .reset {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .warning {
+            text-align: center;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>JavaScript Calculator</h1>
+<p class="warning">Don't divide by zero</p>
+
+<div id="calculator" class="calculator">
+    <button id="clear" class="clear">C</button>
+    <div id="viewer" class="viewer">0</div>
+    <button class="num" data-num="7">7</button>
+    <button class="num" data-num="8">8</button>
+    <button class="num" data-num="9">9</button>
+    <button data-ops="plus" class="ops">+</button>
+    <button class="num" data-num="4">4</button>
+    <button class="num" data-num="5">5</button>
+    <button class="num" data-num="6">6</button>
+    <button data-ops="minus" class="ops">-</button>
+    <button class="num" data-num="1">1</button>
+    <button class="num" data-num="2">2</button>
+    <button class="num" data-num="3">3</button>
+    <button data-ops="times" class="ops">*</button>
+    <button class="num" data-num="0">0</button>
+    <button class="num" data-num=".">.</button>
+    <button id="equals" class="equals" data-result="">=</button>
+    <button data-ops="divided by" class="ops">/</button>
+</div>
+
+<a id="reset" class="reset" href="https://codepen.io/giana/pen/GJMBEv" target="_top">Reset Universe?</a>
+
+<script>
+    (function() {
+        "use strict";
+        
+        // Shortcut to get elements
+        var el = function(element) {
+            if (element.charAt(0) === "#") { 
+                return document.querySelector(element); 
+            }
+            return document.querySelectorAll(element); 
+        };
+
+        // Variables
+        var viewer = el("#viewer"), 
+            equals = el("#equals"), 
+            nums = el(".num"), 
+            ops = el(".ops"), 
+            theNum = "", 
+            oldNum = "", 
+            resultNum, 
+            operator; 
+
+        // When: Number is clicked. Get the current number selected
+        var setNum = function() {
+            if (resultNum) { 
+                theNum = this.getAttribute("data-num");
+                resultNum = "";
+            } else { 
+                theNum += this.getAttribute("data-num");
+            }
+            viewer.innerHTML = theNum; 
+        };
+
+        // When: Operator is clicked. Pass number to oldNum and save operator
+        var moveNum = function() {
+            oldNum = theNum;
+            theNum = "";
+            operator = this.getAttribute("data-ops");
+
+            equals.setAttribute("data-result", ""); 
+        };
+
+        // When: Equals is clicked. Calculate result
+        var displayNum = function() {
+            oldNum = parseFloat(oldNum);
+            theNum = parseFloat(theNum);
+
+            switch (operator) {
+                case "plus":
+                    resultNum = oldNum + theNum;
+                    break;
+
+                case "minus":
+                    resultNum = oldNum - theNum;
+                    break;
+
+                case "times":
+                    resultNum = oldNum * theNum;
+                    break;
+
+                case "divided by":
+                    if (theNum === 0) {
+                        resultNum = "Don't divide by zero";
+                    } else {
+                        resultNum = oldNum / theNum;
+                    }
+                    break;
+
+                default:
+                    resultNum = theNum;
+            }
+
+            viewer.innerHTML = resultNum;
+            equals.setAttribute("data-result", resultNum);
+
+            oldNum = 0;
+            theNum = resultNum;
+        };
+
+        // When: Clear button is pressed. Clear everything
+        var clearAll = function() {
+            oldNum = "";
+            theNum = "";
+            viewer.innerHTML = "0";
+            equals.setAttribute("data-result", resultNum);
+        };
+
+        // Add click event to numbers
+        for (var i = 0, l = nums.length; i < l; i++) {
+            nums[i].onclick = setNum;
+        }
+
+        // Add click event to operators
+        for (var i = 0, l = ops.length; i < l; i++) {
+            ops[i].onclick = moveNum;
+        }
+
+        // Add click event to equal sign
+        equals.onclick = displayNum;
+
+        // Add click event to clear button
+        el("#clear").onclick = clearAll;
+    }());
+</script>
+
+</body>
+</html>
