@@ -3,34 +3,31 @@
 
   // Shortcut to get elements
   var el = function(element) {
-    if (element.charAt(0) === "#") { // If passed an ID...
-      return document.querySelector(element); // ... returns single element
+    if (element.charAt(0) === "#") {
+      return document.querySelector(element);
     }
-
-    return document.querySelectorAll(element); // Otherwise, returns a nodelist
+    return document.querySelectorAll(element);
   };
 
   // Variables
-  var viewer = el("#viewer"), // Calculator screen where result is displayed
-    equals = el("#equals"), // Equal button
-    nums = el(".num"), // List of numbers
-    ops = el(".ops"), // List of operators
-    theNum = "", // Current number
-    oldNum = "", // First number
-    resultNum, // Result
-    operator; // Batman
+  var viewer = el("#viewer"),
+      equals = el("#equals"),
+      nums = el(".num"),
+      ops = el(".ops"),
+      theNum = "",
+      oldNum = "",
+      resultNum,
+      operator;
 
   // When: Number is clicked. Get the current number selected
   var setNum = function() {
-    if (resultNum) { // If a result was displayed, reset number
+    if (resultNum) {
       theNum = this.getAttribute("data-num");
       resultNum = "";
-    } else { // Otherwise, add digit to previous number (this is a string!)
+    } else {
       theNum += this.getAttribute("data-num");
     }
-
-    viewer.innerHTML = theNum; // Display current number
-
+    viewer.innerHTML = theNum;
   };
 
   // When: Operator is clicked. Pass number to oldNum and save operator
@@ -38,59 +35,45 @@
     oldNum = theNum;
     theNum = "";
     operator = this.getAttribute("data-ops");
-
-    equals.setAttribute("data-result", ""); // Reset result in attr
+    equals.setAttribute("data-result", "");
   };
 
   // When: Equals is clicked. Calculate result
   var displayNum = function() {
-
-    // Convert string input to numbers
     oldNum = parseFloat(oldNum);
     theNum = parseFloat(theNum);
 
-    // Perform operation
     switch (operator) {
       case "plus":
         resultNum = oldNum + theNum;
         break;
-
       case "minus":
         resultNum = oldNum - theNum;
         break;
-
       case "times":
         resultNum = oldNum * theNum;
         break;
-
       case "divided by":
         resultNum = oldNum / theNum;
         break;
-
-        // If equal is pressed without an operator, keep number and continue
       default:
         resultNum = theNum;
     }
 
-    // If NaN or Infinity returned
     if (!isFinite(resultNum)) {
-      if (isNaN(resultNum)) { // If result is not a number; set off by, eg, double-clicking operators
+      if (isNaN(resultNum)) {
         resultNum = "You broke it!";
-      } else { // If result is infinity, set off by dividing by zero
+      } else {
         resultNum = "Look at what you've done";
-        el('#calculator').classList.add("broken"); // Break calculator
-        el('#reset').classList.add("show"); // And show reset button
+        el("#calculator").classList.add("broken");
+        el("#reset").classList.add("show");
       }
     }
 
-    // Display result, finally!
     viewer.innerHTML = resultNum;
     equals.setAttribute("data-result", resultNum);
-
-    // Now reset oldNum & keep result
     oldNum = 0;
     theNum = resultNum;
-
   };
 
   // When: Clear button is pressed. Clear everything
@@ -100,8 +83,6 @@
     viewer.innerHTML = "0";
     equals.setAttribute("data-result", resultNum);
   };
-
-  /* The click events */
 
   // Add click event to numbers
   for (var i = 0, l = nums.length; i < l; i++) {
